@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProctorHall · Online Exam System</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b1220;--panel:#121b31;--line:#23314f;--text:#e6ebf5;--muted:#8fa1c2;--gold:#e0b85a;--teal:#5fc3b5;--red:#e5736f}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 500px at 50% -10%,#16244a,var(--bg));background-attachment:fixed;color:var(--text);font:15px/1.5 Inter,system-ui,sans-serif;min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:16px 32px;border-bottom:1px solid var(--line)}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0 0 6px}h1{font-size:24px;cursor:pointer}h1 span,.hero span{color:var(--gold)}
+main{max-width:980px;margin:26px auto;padding:0 18px}a{color:var(--gold)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin:12px 0 4px}
+input,select,textarea{width:100%;background:#0d1528;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px;font:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:-1px}
+.row{display:flex;gap:12px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+.btn{background:var(--gold);color:#1a1405;border:0;border-radius:8px;padding:10px 18px;font:600 14px Inter;cursor:pointer;margin-top:12px}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--text)}.btn.sm{padding:6px 12px;margin:0;font-size:13px}.btn.red{background:none;border:1px solid var(--red);color:var(--red)}
+.pill{display:inline-block;border-radius:99px;padding:2px 10px;font-size:12px;margin:0 6px 4px 0;border:1px solid var(--line);color:var(--muted)}
+.easy{color:var(--teal)}.medium{color:var(--gold)}.hard{color:var(--red)}.muted{color:var(--muted)}.hide{display:none}
+.hero{text-align:center;margin:30px 0}.hero h2{font-size:38px}.roles .role{cursor:pointer;text-align:center;padding:34px 22px;transition:.2s}.roles .role:hover{border-color:var(--gold);transform:translateY(-3px)}.ico{font-size:48px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:18px}.tabs button{background:none;border:0;color:var(--muted);padding:10px 16px;font:600 14px Inter;cursor:pointer;border-bottom:2px solid transparent}.tabs .on{color:var(--gold);border-color:var(--gold)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:16px}.tile{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center}.tile b{display:block;font:700 26px Fraunces;color:var(--gold)}.tile span{color:var(--muted);font-size:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:9px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-size:12px;text-transform:uppercase}
+.opt{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-top:8px;cursor:pointer;color:var(--text);text-transform:none;font-size:15px;letter-spacing:0}.opt:hover{border-color:var(--gold)}.opt.sel{background:#1c2a4d;border-color:var(--gold)}.opt input{width:auto}.opt.ro{cursor:default}.opt.ok{border-color:var(--teal)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:14px;position:sticky;top:0;z-index:5}.bar .right{text-align:right}#timer{font:700 28px Fraunces;color:var(--gold)}#timer.low{color:var(--red)}
+.prog,.track{height:6px;background:#0d1528;border-radius:9px;overflow:hidden;margin-top:6px;min-width:160px}.prog i,.track i{display:block;height:100%;background:var(--teal)}
+.exam{display:grid;grid-template-columns:170px 1fr;gap:16px}@media(max-width:700px){.exam{grid-template-columns:1fr}}
+.nav{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;height:fit-content}.nb{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:#0d1528;color:var(--text);cursor:pointer}.nb.done{background:#1d4b45;border-color:var(--teal)}.nb.cur{outline:2px solid var(--gold)}.nb.flag{box-shadow:inset 0 0 0 2px var(--gold)}
+.ans{background:#0d1528;border:1px solid var(--line);border-radius:8px;padding:10px;white-space:pre-wrap}.rq{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.b2{display:grid;grid-template-columns:1fr 140px 44px;gap:10px;align-items:center;font-size:13px;margin:6px 0}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--panel);border:1px solid var(--gold);padding:10px 16px;border-radius:10px;opacity:0;transition:.3s;pointer-events:none;z-index:9}
+</style></head><body>
+<header><div style="display:flex;align-items:center;gap:14px"><button id="back" class="btn ghost sm hide" onclick="goBack()">← Back</button><h1 onclick="boot()">Proctor<span>Hall</span></h1></div><div id="who"></div></header>
+<main id="app"></main><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const api=async(u,m='GET',b)=>{const r=await fetch('/api/'+u,{method:m,headers:{'Content-Type':'application/json'},body:b&&JSON.stringify(b)});const j=await r.json();if(!r.ok)throw new Error(j.error||'Error');return j};
+const toast=t=>{const e=$('#toast');e.textContent=t;e.style.opacity=1;clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.opacity=0,2600)};
+const opts=(a,k='name')=>a.map(x=>`<option value="${x.id}">${esc(x[k])}</option>`).join('');
+const fmt=(t,z='—')=>t?new Date(t).toLocaleString([],{dateStyle:'medium',timeStyle:'short'}):z;
+const tile=(v,l)=>`<div class="tile"><b>${v}</b><span>${l}</span></div>`;
+const F=(id,l,v,t='number')=>`<div><label>${l}</label><input id="${id}" type="${t}" value="${v}"></div>`;
+const dur=s=>{if(s<=0)return'0s';const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);return(d?d+'d ':'')+(h?h+'h ':'')+m+'m '+(s%60)+'s'};
+const app=$('#app');let U=null,tick=null,cur=null,qi=0,flags=new Set(),TT='exams',meta,EX=[];
+
+async function boot(){clearInterval(tick);cur=null;stack.length=0;history.replaceState(null,'');U=(await api('me')).user;
+$('#who').innerHTML=U?`<span class="pill">${U.role=='teacher'?'Teacher':'Student'} · ${esc(U.name)} (${esc(U.ident)})</span><button class="btn ghost sm" onclick="logout()">Log out</button>`:'';
+U?(U.role=='teacher'?tDash():sDash()):landing()}
+async function logout(){await api('logout','POST');boot()}
+
+/* ---------- landing & auth ---------- */
+function landing(){app.innerHTML=`<div class="hero"><h2>Welcome to Proctor<span>Hall</span></h2><p class="muted">Secure online exams · randomized question sets · live proctoring · teacher corrections</p></div>
+<div class="row roles"><div class="card role" onclick="auth('teacher')"><div class="ico">🎓</div><h3>I'm a Teacher</h3><p class="muted">Build question banks, schedule exams, correct answers and see analytics.</p><button class="btn">Continue with Teacher ID</button></div>
+<div class="card role" onclick="auth('student')"><div class="ico">📝</div><h3>I'm a Student</h3><p class="muted">Take the exams your teachers publish and track your results.</p><button class="btn">Continue with Roll Number</button></div></div>`}
+function auth(role,mode='login'){const T=role=='teacher',reg=mode=='register';
+app.innerHTML=`<div class="card" style="max-width:440px;margin:30px auto"><h2>${T?'Teacher':'Student'} ${reg?'sign up':'login'}</h2>
+<label>${T?'Teacher ID':'Roll number'}</label><input id="a_id">${reg?`<label>Full name</label><input id="a_nm">`:''}
+<label>Password</label><input id="a_pw" type="password">${reg&&T?`<label>Teacher access code</label><input id="a_cd" placeholder="Demo code: TEACH2026">`:''}
+<button class="btn" onclick="doAuth('${role}',${reg})">${reg?'Create account':'Login'}</button> <button class="btn ghost" onclick="landing()">Back</button>
+<p class="muted" style="font-size:13px">${reg?`Already registered? <a href="#" onclick="auth('${role}');return false">Login</a>`:`New here? <a href="#" onclick="auth('${role}','register');return false">Register</a><br>Demo: ${T?'T001 / teach123':'101 / student123'}`}</p></div>`;$('#a_pw').addEventListener('keydown',e=>{if(e.key==='Enter')doAuth(role,reg)})}
+async function doAuth(role,reg){try{const b={role,ident:$('#a_id').value,password:$('#a_pw').value};if(reg){b.name=$('#a_nm').value;if(role=='teacher')b.code=$('#a_cd').value}await api(reg?'register':'login','POST',b);boot()}catch(e){toast(e.message)}}
+
+/* ---------- teacher ---------- */
+async function tDash(t){TT=t||TT;meta=await api('meta');
+app.innerHTML=`<div class="tabs">${[['exams','Exams'],['bank','Question Bank'],['results','Results & Correction']].map(([k,l])=>`<button class="${TT==k?'on':''}" onclick="tDash('${k}')">${l}</button>`).join('')}</div><div id="tv"></div>`;
+({exams:tExams,bank:tBank,results:()=>tResults()})[TT]()}
+async function tExams(){const ex=await api('exams');
+$('#tv').innerHTML=`<div class="card"><h2>Create exam</h2>
+<div class="row">${F('e_t','Title','','text')}<div><label>Subject</label><select id="e_s">${opts(meta.subjects)}</select></div>${F('e_m','Time limit (minutes)',30)}</div>
+<div class="row">${F('e_1','Easy MCQs',2)}${F('e_2','Medium MCQs',2)}${F('e_3','Hard MCQs',1)}${F('e_4','Short-answer',1)}</div>
+<div class="row">${F('e_o','Opens at (blank = now)','','datetime-local')}${F('e_c','Closes at (blank = no deadline)','','datetime-local')}</div>
+<div class="row">${F('e_ng','Negative mark per wrong MCQ',0.25)}${F('e_pp','Pass percentage',40)}${F('e_mv','Max tab-switch warnings',3)}</div>
+<label>Instructions shown to students</label><textarea id="e_i" rows="2"></textarea><button class="btn" onclick="addE()">Create exam (as draft)</button></div>`+
+(ex.map(e=>`<div class="card"><div class="row" style="align-items:center"><div style="flex:2"><h3>${esc(e.title)}</h3><span class="muted">${esc(e.subject)} · ${e.duration_min} min · ${e.n_easy+e.n_medium+e.n_hard+e.n_short} questions per student</span>
+<div style="margin-top:8px"><span class="pill ${e.published?'easy':''}">${e.published?'Published':'Draft'}</span><span class="pill">${e.results_released?'Results published':'Results not published'}</span><span class="pill">${e.submitted}/${e.attempts} submitted</span>${e.pending?`<span class="pill hard">${e.pending} answers to correct</span>`:''}</div>
+<div class="muted" style="font-size:13px">Window: ${fmt(e.opens_at,'immediately')} → ${fmt(e.closes_at,'no deadline')}</div></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px"><button class="btn sm" onclick="setEx(${e.id},{published:${!e.published}})">${e.published?'Unpublish':'Publish to students'}</button>
+<button class="btn ghost sm" onclick="setEx(${e.id},{results_released:${!e.results_released}})">${e.results_released?'Unpublish results':'Publish results'}</button>
+<button class="btn ghost sm" onclick="TT='results';tDash();setTimeout(()=>tResults(${e.id}),50)">Results &amp; correction</button>
+<button class="btn red sm" onclick="delEx(${e.id})">Delete</button></div></div></div>`).join('')||'<div class="card muted">No exams yet.</div>')}
+async function addE(){const dt=v=>v?new Date(v).toISOString():null;try{await api('exams','POST',{title:$('#e_t').value,subject_id:+$('#e_s').value,duration_min:+$('#e_m').value,easy:+$('#e_1').value,medium:+$('#e_2').value,hard:+$('#e_3').value,short:+$('#e_4').value,opens_at:dt($('#e_o').value),closes_at:dt($('#e_c').value),negative:+$('#e_ng').value,pass_percent:+$('#e_pp').value,max_violations:+$('#e_mv').value,instructions:$('#e_i').value});toast('Exam created. Publish it so students can see it.');tExams()}catch(e){toast(e.message)}}
+async function setEx(id,b){await api(`exams/${id}/settings`,'POST',b);tExams()}
+async function delEx(id){if(!confirm('Delete this exam?'))return;try{await api(`exams/${id}`,'DELETE');tExams()}catch(e){toast(e.message)}}
+
+async function tBank(){const qs=await api('questions');
+$('#tv').innerHTML=`<div class="card"><h2>Add question</h2>
+<div class="row"><div><label>Type</label><select id="q_ty" onchange="$('#q_mcq').classList.toggle('hide',this.value!='mcq');$('#q_sh').classList.toggle('hide',this.value=='mcq')"><option value="mcq">Multiple choice (auto-graded)</option><option value="short">Short answer (you correct it)</option></select></div>
+<div><label>Subject</label><select id="q_s">${opts(meta.subjects)}</select></div><div><label>Difficulty</label><select id="q_d"><option>easy</option><option>medium</option><option>hard</option></select></div>${F('q_mk','Marks',1)}</div>
+<label>Question</label><textarea id="q_t" rows="2"></textarea><label>Tags (comma separated)</label><input id="q_g">
+<div id="q_mcq">${[0,1,2,3].map(i=>`<label>Option ${i+1}</label><input class="qo">`).join('')}<label>Correct option</label><select id="q_c"><option value="0">1</option><option value="1">2</option><option value="2">3</option><option value="3">4</option></select></div>
+<div id="q_sh" class="hide"><label>Model answer (only you see this while correcting)</label><textarea id="q_ma" rows="2"></textarea></div>
+<button class="btn" onclick="addQ()">Save to bank</button>
+<div class="row" style="margin-top:14px;align-items:end"><div><label>New subject</label><input id="ns"></div><div style="flex:0"><button class="btn ghost sm" onclick="addSub()">Add subject</button></div></div></div>
+<div class="card"><h2>Your bank (${qs.length})</h2><div class="row"><select id="fd" onchange="filt()"><option value="">All levels</option><option>easy</option><option>medium</option><option>hard</option></select>
+<select id="fy" onchange="filt()"><option value="">All types</option><option value="mcq">MCQ</option><option value="short">Short answer</option></select>
+<select id="ft" onchange="filt()"><option value="">All tags</option>${meta.tags.map(t=>`<option>${esc(t.name)}</option>`).join('')}</select></div><div id="ql"></div></div>`;showQ(qs)}
+const showQ=qs=>$('#ql').innerHTML='<table><tr><th>Question</th><th>Type</th><th>Level</th><th>Marks</th><th>Tags</th><th></th></tr>'+qs.map(q=>`<tr><td>${esc(q.text)}</td><td>${q.qtype}</td><td class="${q.difficulty}">${q.difficulty}</td><td>${q.marks}</td><td class="muted">${esc(q.tags)}</td><td><button class="btn red sm" onclick="delQ(${q.id})">✕</button></td></tr>`).join('')+'</table>';
+async function filt(){showQ(await api(`questions?difficulty=${$('#fd').value}&qtype=${$('#fy').value}&tag=${encodeURIComponent($('#ft').value)}`))}
+async function addQ(){try{await api('questions','POST',{qtype:$('#q_ty').value,text:$('#q_t').value,subject_id:+$('#q_s').value,difficulty:$('#q_d').value,marks:$('#q_mk').value,tags:$('#q_g').value,model_answer:$('#q_ma').value,options:[...document.querySelectorAll('.qo')].map(i=>i.value),correct:+$('#q_c').value});toast('Question added');tDash('bank')}catch(e){toast(e.message)}}
+async function delQ(id){try{await api(`questions/${id}`,'DELETE');tBank()}catch(e){toast(e.message)}}
+async function addSub(){try{await api('subjects','POST',{name:$('#ns').value});tDash('bank')}catch(e){toast(e.message)}}
+
+async function tResults(eid){const ex=await api('exams');eid=eid||(ex[0]&&ex[0].id);
+if(!eid){$('#tv').innerHTML='<div class="card muted">Create an exam first.</div>';return}
+const r=await api(`exams/${eid}/results`),s=r.stats;
+$('#tv').innerHTML=`<div class="card row" style="align-items:end"><div><label>Exam</label><select onchange="tResults(+this.value)">${ex.map(e=>`<option value="${e.id}" ${e.id==eid?'selected':''}>${esc(e.title)}</option>`).join('')}</select></div><div style="flex:0"><a class="btn ghost" style="display:inline-block;text-decoration:none;white-space:nowrap" href="/api/exams/${eid}/export">⬇ Export CSV</a></div></div>
+<div class="card row" style="align-items:center"><div style="flex:2"><h3>Result publishing</h3><span class="muted">${r.exam.results_released?'Students can now see their score, answers and your feedback.':'Students only see "submitted" until you publish. Finish corrections first, then publish.'}</span></div><div style="flex:0 0 auto;text-align:right"><span class="pill ${r.exam.results_released?'easy':'medium'}">${r.exam.results_released?'Published':'Not published'}</span><br><button class="btn" onclick="pubRes(${eid},${!r.exam.results_released},${r.attempts.reduce((n,a)=>n+a.pending,0)})">${r.exam.results_released?'Unpublish results':'Publish results'}</button></div></div>
+<div class="tiles">${tile(s.submitted+'/'+s.started,'Submitted')}${tile(s.avg+'%','Average')}${tile(s.high+'%','Highest')}${tile(s.low+'%','Lowest')}${tile(s.passed,'Passed (≥'+r.exam.pass_percent+'%)')}</div>
+<div class="card"><h2>Attempts</h2><table><tr><th>Roll</th><th>Student</th><th>Status</th><th>Score</th><th>Flags</th><th>To correct</th><th></th></tr>${r.attempts.map(a=>`<tr><td>${esc(a.roll_no)}</td><td>${esc(a.name)}</td><td>${a.submitted_at?(a.auto_submitted?'<span class="hard">Auto-submitted</span>':'Submitted'):'<span class="muted">In progress</span>'}</td><td>${a.submitted_at?a.score+'/'+a.total:'—'}</td><td class="${a.flags?'hard':'muted'}">${a.flags}</td><td>${a.pending?`<span class="pill hard">${a.pending}</span>`:'—'}</td><td><button class="btn sm" onclick="review(${a.id})">Review &amp; correct</button></td></tr>`).join('')||'<tr><td class="muted">No attempts yet</td></tr>'}</table></div>
+<div id="rv"></div><div class="card"><h2>Question accuracy</h2>${r.questions.map(q=>{const p=Math.round(100*q.ok/q.n);return`<div class="b2"><span>${esc(q.text)}</span><div class="track"><i style="width:${p}%"></i></div><b>${p}%</b></div>`}).join('')||'<span class="muted">Appears after students submit.</span>'}</div>`}
+async function review(aid){const d=await api(`attempts/${aid}/review`);
+$('#rv').innerHTML=`<div class="card"><h2>${esc(d.student.name)} (${esc(d.student.roll_no)}) — <span style="color:var(--gold)">${d.score}/${d.total}</span></h2>
+<p class="muted">Proctor log: ${d.events.length?d.events.map(e=>`${e.event_type} @ ${new Date(e.created_at).toLocaleTimeString()}`).join(' · '):'no flags'}</p>`+
+d.questions.map((q,i)=>`<div class="rq"><span class="pill ${q.difficulty}">${q.difficulty}</span><span class="pill">${q.qtype=='mcq'?'MCQ':'Short'} · ${q.marks} marks</span>${q.pending?'<span class="pill hard">needs correction</span>':''}<span class="pill">answered: ${fmt(q.answered_at,'never')}</span><h3>${i+1}. ${esc(q.text)}</h3>
+${q.qtype=='mcq'?q.options.map(o=>`<div class="opt ro ${o.is_correct?'ok':''} ${q.selected==o.id?'sel':''}">${esc(o.text)} ${o.is_correct?'✓':''} ${q.selected==o.id?'← student':''}</div>`).join(''):`<div class="ans">${esc(q.text_answer)||'<i class="muted">No answer</i>'}</div><p class="muted">Model answer: ${esc(q.model_answer)||'—'}</p>`}
+<div class="row" style="align-items:end"><div style="flex:0 0 120px"><label>Marks (max ${q.marks})</label><input type="number" step="0.25" min="0" max="${q.marks}" id="m${q.id}" value="${q.final}"></div><div><label>Feedback</label><input id="f${q.id}" value="${esc(q.correction?.feedback)}"></div><div style="flex:0"><button class="btn" onclick="saveCorr(${aid},${q.id})">Save</button></div></div></div>`).join('')+'</div>';
+$('#rv').scrollIntoView({behavior:'smooth'})}
+async function pubRes(eid,v,p){if(v&&p&&!confirm(`${p} short answer(s) are not corrected yet. Publish anyway?`))return;if(!v&&!confirm('Hide the results from students again?'))return;
+try{await api(`exams/${eid}/settings`,'POST',{results_released:v});toast(v?'Results published. Students can now see them.':'Results hidden from students');tResults(eid)}catch(e){toast(e.message)}}
+async function saveCorr(aid,qid){try{const r=await api(`attempts/${aid}/correct`,'POST',{question_id:qid,marks:$('#m'+qid).value,feedback:$('#f'+qid).value});toast(`Saved. New total ${r.score}/${r.total}`)}catch(e){toast(e.message)}}
+
+/* ---------- student ---------- */
+async function sDash(){EX=await api('student/exams');const done=EX.filter(e=>e.attempt&&e.attempt.submitted_at).length;
+app.innerHTML=`<div class="hero" style="margin:10px 0 20px"><h2 style="font-size:30px">Hello, ${esc(U.name)}</h2><p class="muted">Roll No. ${esc(U.ident)} · you only see exams your teachers have published</p></div>
+<div class="tiles">${tile(EX.filter(e=>e.state=='open'&&!(e.attempt&&e.attempt.submitted_at)).length,'Open now')}${tile(EX.filter(e=>e.state=='upcoming').length,'Upcoming')}${tile(done,'Completed')}</div>`+
+(EX.map(e=>{const a=e.attempt,sub=a&&a.submitted_at;
+const btn=sub?`<button class="btn" onclick="viewResult(${a.id})">${e.results_released?'View result':'Submission status'}</button>`:a?`<button class="btn" onclick="begin(${e.id})">Resume exam</button>`:e.state=='open'?`<button class="btn" onclick="intro(${e.id})">Start exam</button>`:`<button class="btn ghost" disabled>${e.state=='upcoming'?'Not open yet':'Closed'}</button>`;
+return`<div class="card"><div class="row" style="align-items:center"><div style="flex:2"><h3>${esc(e.title)}</h3><span class="muted">${esc(e.subject)} · by ${esc(e.teacher)} · ${e.duration_min} min · ${e.n_questions} questions</span>
+<div style="margin-top:8px"><span class="pill ${e.state=='open'?'easy':e.state=='upcoming'?'medium':'hard'}">${e.state}</span>${sub?'<span class="pill easy">submitted</span><span class="pill '+(e.results_released?'easy':'medium')+'">'+(e.results_released?'results published':'results awaited')+'</span>':a?'<span class="pill medium">in progress</span>':''}${sub&&a.score!=null?`<span class="pill">Score ${a.score}/${a.total}</span>`:''}</div>
+<div class="muted" style="font-size:13px;margin-top:4px"><span class="cd" data-t="${e.state=='upcoming'?e.opens_at:e.closes_at||''}" data-s="${e.state}"></span></div></div><div style="flex:0 0 auto">${btn}</div></div></div>`}).join('')||'<div class="card muted">No exams published yet. Check back soon.</div>');
+clearInterval(tick);const f=()=>document.querySelectorAll('.cd').forEach(el=>{const t=el.dataset.t,s=el.dataset.s;if(s=='closed'){el.textContent='This exam has closed';return}if(!t){el.textContent='No deadline';return}el.textContent=(s=='upcoming'?'Opens in ':'Closes in ')+dur(Math.floor((new Date(t)-Date.now())/1000))});f();tick=setInterval(f,1000)}
+function intro(id){const e=EX.find(x=>x.id==id);clearInterval(tick);
+app.innerHTML=`<div class="card" style="max-width:640px;margin:0 auto"><h2>${esc(e.title)}</h2><p class="muted">${e.n_questions} questions · ${e.duration_min} minutes · pass mark ${e.pass_percent}%</p>
+<p>${esc(e.instructions)||'Read every question carefully.'}</p><h3 style="font-size:16px">Exam rules</h3><ul class="muted"><li>Your question set is random and unique to you.</li><li>Answers auto-save with a timestamp. You can change them until you submit.</li><li>Leaving the tab or exiting full screen counts as a warning. After <b>${e.max_violations}</b> warnings your exam is auto-submitted.</li><li>Copy, paste and right-click are disabled and logged.</li>${e.negative_marks?`<li>Each wrong MCQ costs ${e.negative_marks} mark(s).</li>`:''}<li>The exam auto-submits when the timer ends.</li></ul>
+<label class="opt ro" style="cursor:pointer"><input type="checkbox" id="agree"> I understand and agree to these rules</label><button class="btn" onclick="$('#agree').checked?begin(${id}):toast('Please tick the box first')">Begin exam</button> <button class="btn ghost" onclick="sDash()">Cancel</button></div>`}
+async function begin(id){try{cur=await api('attempts','POST',{exam_id:id});if(cur.attempt.submitted_at){const a=cur.attempt.id;cur=null;return viewResult(a)}
+cur.deadline=Date.now()+cur.remaining*1000;qi=0;flags=new Set();document.documentElement.requestFullscreen?.().catch(()=>{});pushView('examRoom');render()}catch(e){toast(e.message)}}
+const isAns=x=>x.qtype=='mcq'?x.selected!=null:(x.text_answer||'').trim()!='';
+function render(){clearInterval(tick);const q=cur.questions[qi],n=cur.questions.length,ans=cur.questions.filter(isAns).length;
+app.innerHTML=`<div class="card bar"><div><h3>${esc(cur.attempt.title)}</h3><span class="muted" id="pc">Answered ${ans}/${n}</span><div class="prog"><i id="pg" style="width:${100*ans/n}%"></i></div></div><div class="right"><div id="timer">--:--</div><span class="muted" id="viol">Warnings ${cur.violations}/${cur.attempt.max_violations}</span></div></div>
+<div class="exam"><aside class="card nav">${cur.questions.map((x,i)=>`<button class="nb ${i==qi?'cur':''} ${isAns(x)?'done':''} ${flags.has(x.id)?'flag':''}" onclick="go(${i})">${i+1}</button>`).join('')}<p class="muted" style="font-size:12px;width:100%;margin:8px 0 0">Green = answered<br>Gold border = marked</p></aside>
+<div><div class="card"><span class="pill ${q.difficulty}">${q.difficulty}</span><span class="pill">Q${qi+1} of ${n} · ${q.marks} mark${q.marks>1?'s':''}</span>${flags.has(q.id)?'<span class="pill medium">marked for review</span>':''}<h3 style="font-size:19px;margin:10px 0">${esc(q.text)}</h3>
+${q.qtype=='mcq'?q.options.map(o=>`<label class="opt ${q.selected==o.id?'sel':''}"><input type="radio" name="o" ${q.selected==o.id?'checked':''} onchange="pick(${q.id},${o.id})">${esc(o.text)}</label>`).join(''):`<textarea rows="8" placeholder="Type your answer here…" oninput="typing(${q.id},this)">${esc(q.text_answer)}</textarea>`}</div>
+<div class="row" style="gap:8px"><button class="btn ghost" ${qi?'':'disabled'} onclick="go(${qi-1})">← Previous</button><button class="btn ghost" onclick="mark(${q.id})">⚑ Mark for review</button>${qi<n-1?`<button class="btn" onclick="go(${qi+1})">Next →</button>`:`<button class="btn" onclick="submitExam()">Submit exam</button>`}</div></div></div>`;
+const t=()=>{const r=Math.max(0,Math.round((cur.deadline-Date.now())/1000)),e=$('#timer');if(!e)return;e.textContent=`${String(Math.floor(r/60)).padStart(2,'0')}:${String(r%60).padStart(2,'0')}`;e.classList.toggle('low',r<60);if(r<=0){clearInterval(tick);submitExam(true)}};t();tick=setInterval(t,1000)}
+function refreshNav(){const n=cur.questions.length,a=cur.questions.filter(isAns).length;document.querySelectorAll('.nb').forEach((b,i)=>b.classList.toggle('done',isAns(cur.questions[i])));$('#pc').textContent=`Answered ${a}/${n}`;$('#pg').style.width=100*a/n+'%'}
+const mark=id=>{flags.has(id)?flags.delete(id):flags.add(id);render()};
+function go(i){flush();qi=i;render()}
+async function pick(id,o){const x=cur.questions.find(q=>q.id==id);try{await api(`attempts/${cur.attempt.id}/answer`,'POST',{question_id:id,option_id:o});x.selected=o;render();toast('Saved '+new Date().toLocaleTimeString())}catch(e){toast(e.message);if(/Time is over|submitted/.test(e.message))submitExam(true)}}
+let dt,pend=null;function typing(id,el){const x=cur.questions.find(q=>q.id==id);x.text_answer=el.value;refreshNav();pend=()=>api(`attempts/${cur.attempt.id}/answer`,'POST',{question_id:id,text:el.value});clearTimeout(dt);dt=setTimeout(flush,800)}
+async function flush(){clearTimeout(dt);if(pend){const p=pend;pend=null;try{await p();toast('Saved '+new Date().toLocaleTimeString())}catch(e){toast(e.message)}}}
+async function submitExam(auto){if(!cur)return;if(!auto){const un=cur.questions.filter(x=>!isAns(x)).length;if(!confirm(un?`You have ${un} unanswered question(s). Submit anyway?`:'Submit your exam now?'))return}
+await flush();clearInterval(tick);const id=cur.attempt.id;try{await api(`attempts/${id}/submit`,'POST')}catch(e){}cur=null;document.fullscreenElement&&document.exitFullscreen();viewResult(id,auto)}
+async function viewResult(id,auto){clearInterval(tick);const r=await api(`attempts/${id}/result`);const p=r.released?Math.round(1000*r.score/r.total)/10:0;
+app.innerHTML=`<div class="card" style="text-align:center"><h2>${esc(r.title)}</h2><p class="muted">Submitted ${fmt(r.submitted_at)}${r.auto_submitted||auto?' · <span class="hard">auto-submitted</span>':''}</p>
+${r.released?`<p style="font:700 46px Fraunces;color:var(--gold);margin:6px">${r.score} / ${r.total}</p><p><span class="pill ${p>=r.pass_percent?'easy':'hard'}">${p}% · ${p>=r.pass_percent?'PASS':'FAIL'}</span>${r.pending?`<span class="pill medium">${r.pending} answer(s) still awaiting teacher correction</span>`:''}</p>`:'<p style="font-size:18px">✅ Your answers are recorded.</p><p class="muted">Your score and answers will appear here once your teacher publishes the results.</p>'}<button class="btn ghost" onclick="sDash()">Back to my exams</button></div>`+
+(r.released?r.questions.map((q,i)=>`<div class="card"><span class="pill ${q.difficulty}">${q.difficulty}</span><span class="pill">${q.final} / ${q.marks} marks</span>${q.pending?'<span class="pill medium">awaiting correction</span>':''}<h3 style="font-size:17px;margin:8px 0">${i+1}. ${esc(q.text)}</h3>
+${q.qtype=='mcq'?q.options.map(o=>`<div class="opt ro ${o.is_correct?'ok':''} ${q.selected==o.id?'sel':''}">${esc(o.text)} ${o.is_correct?'✓':''} ${q.selected==o.id?'← your answer':''}</div>`).join(''):`<div class="ans">${esc(q.text_answer)||'<i class="muted">No answer</i>'}</div><p class="muted">Expected: ${esc(q.model_answer)||'—'}</p>`}
+${q.correction&&q.correction.feedback?`<p><b style="color:var(--gold)">Teacher feedback:</b> ${esc(q.correction.feedback)}</p>`:''}</div>`).join(''):'')}
+
+/* ---------- proctoring ---------- */
+async function flag(type){if(!cur)return;try{const r=await api(`attempts/${cur.attempt.id}/event`,'POST',{type});cur.violations=r.violations;const v=$('#viol');if(v)v.textContent=`Warnings ${r.violations}/${r.max}`;
+if(r.auto_submitted){const id=cur.attempt.id;cur=null;clearInterval(tick);toast('Too many violations: exam auto-submitted');viewResult(id,true)}else if(r.counted)toast(`⚠ Warning ${r.violations}/${r.max}: stay on the exam page`)}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flag('tab_switch')});
+document.addEventListener('fullscreenchange',()=>{if(cur&&!document.fullscreenElement)flag('fullscreen_exit')});
+['copy','paste','cut','contextmenu'].forEach(ev=>document.addEventListener(ev,e=>{if(cur){e.preventDefault();flag(ev=='contextmenu'?'right_click':ev)}}));
+/* ---------- back navigation ---------- */
+const stack=[];let popping=false;
+function pushView(n,a=[]){const t=stack[stack.length-1];
+if(t&&JSON.stringify(t)==JSON.stringify([n,a]))history.replaceState(null,'');else{stack.push([n,a]);popping?history.replaceState(null,''):history.pushState(null,'')}
+$('#back').classList.toggle('hide',stack.length<2)}
+function examRoom(){sDash()}
+['landing','auth','sDash','intro','viewResult','tDash'].forEach(n=>{const f=window[n];window[n]=function(...a){pushView(n,a);return f.apply(this,a)}});
+function leaveExam(){if(!cur)return true;if(!confirm('Leave the exam page? Your timer keeps running. You can resume from your dashboard.'))return false;clearInterval(tick);cur=null;document.fullscreenElement&&document.exitFullscreen();return true}
+function goBack(){stack.length>1?history.back():toast('Nothing to go back to')}
+window.addEventListener('popstate',()=>{if(stack.length<2||!leaveExam()){history.pushState(null,'');return}
+stack.pop();const[n,a]=stack.pop();popping=true;try{window[n](...a)}finally{popping=false}});
+boot();
+</script></body></html>
